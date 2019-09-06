@@ -1,0 +1,32 @@
+########### part1:数据集准备 ##############
+# 1：准备训练用到的数据集，这里用到了lfw数据集，放在data/train目录
+########### part2:人脸检测及对齐 ###########
+# 2：运行align文件下align_dataset_mtcnn.py进行人脸检测和人脸对齐(统一大小112*112)，
+     检测和缩放后的人脸图像保存在lfw_112文件夹下，格式和以前一样;
+########### part3:Insightface训练集准备 ###########
+# 3：在命令行运行im2rec.py文件，生成图像列表lst文件，具体如下：
+	 在与lfw_112同级的文件夹中打开命令行，
+	 执行 python C:\Users\HP\Desktop\face_insighrface\get_mx_data\im2rec.py --list 
+					--recursive train C:\Users\HP\Desktop\face_insighrface\data\lfw_112
+	 # 这样就制作.lsh完成。
+# 4：从列表生成rec文件和idx文件
+	 在与lfw_112同级的文件夹中打开命令行，执行 
+		  python C:\Users\HP\Desktop\face_insighrface\get_mx_data\im2rec.py --pass-through train.lst C:\Users\HP\Desktop\face_insighrface\data
+							
+     这样就生成了train.idx和train.rec用于训练的数据
+	 
+# 5：自己建一个property，里面写入自己训练的数据量 112 112 ###图像数量及大小(N,112,112)
+# end:至此，lst、rec、idx文件已全部生成 
+
+########### part4:Insightface验证集bin文件准备 ###########
+# 1：运行get_pares.py 生成验证集的pares.txt#[类内和类间个数相同]
+     #：这里类内和类间交替写入[例如300对类内，300对类间]，一共分别写入3000/6000对类内和类间作验证集
+
+# 2：运行python lfw2pack.py --data-dir ../data/valid --image-size "112,112" --output ./val.bin
+     # 生成val.bin
+########### part5:Insightface网络训练 ###########
+# src-->运行train_softmax.py
+
+########### part6:Insightface模型验证 ###########
+test_run-->1:1_align_face.py --- 对注册库进行人脸检测、裁剪和对齐
+        -->2:2_demo.py       --- 调用摄像头进行测试
